@@ -20,8 +20,8 @@ def connect_to_db():
     try:
         print("Connected to MongoDB")
         db = client["RAG_SUI"]
-        collection = db["Chats"]
+        chat_collection = db["Chats"]
 
-        return collection
+        return chat_collection
     except Exception as e:
         print(e)
