@@ -55,15 +55,17 @@ def insert_chat(user_type, author, chat_id, message):
 class Chats(Resource):
     def get(self):
         user_id = request.headers.get('user-id')
-        
-        titles = []
-        for chats in chat_collection.find({'author': user_id}):
-            titles.append({ 
-                'title': chats['title'],
-                'id': str(chats['_id'])
-            })
 
-        return {'chats': titles}
+        if user_id:
+            titles = []
+            for chats in chat_collection.find({'author': user_id}):
+                titles.append({ 
+                    'title': chats['title'],
+                    'id': str(chats['_id'])
+                })
+            return {'chats': titles}
+        else:
+            return {'chats': "No chats!"}
 
 
 class ChatModel(Resource):
