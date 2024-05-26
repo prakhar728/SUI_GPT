@@ -9,63 +9,42 @@ const api = axios.create({
   });
 
 
-  const getChat = (id) => {
-    axios.get(`/chat/${id}`)
-    .then(function (response) {
-        // handle success
-        console.log(response);
-
-        return response;
+  const getChat = async (userId, id) => {
+    return await api.get(`/chat/${id}`, {
+        headers: {
+            'user-id': userId
+        }
     })
-    .catch(function (error) {
-        // handle error
-        console.log(error);
-    });
   }
 
 
-  const newChat = () => {
-    axios.get('/chat/new')
-    .then(function (response) {
-        // handle success
-        console.log(response);
-
-        return response;
+  const newChat = async (userId) => {
+    return await api.get('/chat/new', {
+        headers: {
+            'user-id': userId,
+        }
     })
-    .catch(function (error) {
-        // handle error
-        console.log(error);
-    });
   }
 
 
-  const getAllChats = () => {
-    axios.get('/chats')
-    .then(function (response) {
-        // handle success
-        console.log(response);
-
-        return response;
+  const getAllChats = async (userId) => {
+    return await api.get('/chats',  {
+        headers: {
+            'user-id': userId,
+        }
     })
-    .catch(function (error) {
-        // handle error
-        console.log(error);
-    });
   }
 
 
-  const queryModel = (chatId, query) => {
-    axios.get(`/query/${chatId}`, {
-        "query": query
+  const queryModel = async (userId, chatId, query) => {
+    return await api.post(`/query/${chatId}`,{
+        "query": query,
+    },{
+        headers: {
+            'user-id': userId,
+        }
     })
-    .then(function (response) {
-        // handle success
-        console.log(response);
-
-        return response;
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error);
-    });
 }
+
+
+export { getAllChats, getChat, queryModel, newChat }

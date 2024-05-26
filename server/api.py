@@ -1,11 +1,13 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from bson.objectid import ObjectId
+from flask_cors import CORS
 
 from Db import connect_to_db
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)  
 
 chat_collection = connect_to_db()
 
@@ -14,17 +16,18 @@ def new_chat(user_id):
     if user_id:
         chat = chat_collection.insert_one({
             'author': user_id,
-            'title': 'Random_Title',
-            'conversation': []
+            'title': 'New Chat',
+            'conversation': [{
+                'author': 'model',
+                'message': 'Hi, Let"s start the convo!'
+            }]
         })
-
         return chat.inserted_id
 
 
 def insert_chat(user_type, author, chat_id, message):
     if user_type != 'model':
         chat = chat_collection.find_one({'_id': ObjectId(chat_id)})
-        
 
         if chat['author'] == author:
             chat['conversation'].append({
@@ -37,7 +40,7 @@ def insert_chat(user_type, author, chat_id, message):
             return {'result': 'inserted'}, 200
     else:
         chat = chat_collection.find_one({'_id': ObjectId(chat_id)})
-        print(chat, author)
+
         if chat['author'] == author:
             chat['conversation'].append({
                 'author': 'ai',
@@ -55,7 +58,10 @@ class Chats(Resource):
         
         titles = []
         for chats in chat_collection.find({'author': user_id}):
-            titles.append(chats['title'])
+            titles.append({ 
+                'title': chats['title'],
+                'id': str(chats['_id'])
+            })
 
         return {'chats': titles}
 
@@ -77,14 +83,10 @@ class ChatModel(Resource):
 
 
 class RAGModel(Resource):
-    def get(self, chat_id):
+    def post(self, chat_id):
         user_id = request.headers.get('user-id')
-
-        parser = reqparse.RequestParser()
-        parser.add_argument('query', type=str, required=True, help="Query can't be blank")
-        args = parser.parse_args()
-
-        query = args['query']
+        req = request.json
+        query = req['query']
 
         insert_chat('user', user_id, chat_id, query)
 
