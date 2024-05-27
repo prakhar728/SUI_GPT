@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from bson.objectid import ObjectId
 from flask_cors import CORS
+import os
 
 from Db import connect_to_db
 
@@ -101,3 +102,7 @@ class RAGModel(Resource):
 api.add_resource(RAGModel, '/query/<string:chat_id>')
 api.add_resource(ChatModel, '/chat/<string:chat_id>')
 api.add_resource(Chats, '/chats')
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000)) 
+    app.run(port=port, debug=True)
