@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const baseURL = 'http://127.0.0.1:5000/';
+// const baseURL = 'http://127.0.0.1:5000/';
+const baseURL = 'https://sui-gpt.onrender.com/';
 
 const api = axios.create({
     baseURL: baseURL,
-    timeout: 1000,
     headers: {'X-Custom-Header': 'foobar'}
   });
 
