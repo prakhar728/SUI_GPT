@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 from bson.objectid import ObjectId
 from flask_cors import CORS
 import os
+import requests
 
 from Db import connect_to_db
 
@@ -11,7 +12,7 @@ api = Api(app)
 CORS(app)  
 
 chat_collection = connect_to_db()
-
+model_url = os.environ['MODEL_URI']
 
 def new_chat(user_id):
     if user_id:
@@ -51,6 +52,19 @@ def insert_chat(user_type, author, chat_id, message):
             chat_collection.update_one({'_id': ObjectId(chat_id)}, {"$set": chat})
 
             return {'result': 'inserted'}, 200
+
+
+def getAns(query):
+    try:
+        res = requests.post(model_url + '/predict', json = {
+            'query': query
+        })
+
+        return res.json()['response']
+
+    except:
+        return "The model is offline! please try again later!"
+
 
 
 class Chats(Resource):
@@ -93,7 +107,7 @@ class RAGModel(Resource):
 
         insert_chat('user', user_id, chat_id, query)
 
-        response = 'Hi I am a model'
+        response = getAns(query)
 
         insert_chat('model', user_id, chat_id, response)
         
@@ -104,5 +118,5 @@ api.add_resource(ChatModel, '/chat/<string:chat_id>')
 api.add_resource(Chats, '/chats')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000)) 
+    port = int(os.environ.get('PORT', 8000)) 
     app.run(port=port, debug=True)

@@ -8,6 +8,7 @@ const Input = ({query}) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // Prevent the default action
       query(e.target.value);
+      e.target.value = "";
     } 
   }
 

@@ -108,6 +108,7 @@ function App() {
       }
     ]
 
+
       setConversations([...conversations, ...converstaion]);
     })
     .catch(err => {
@@ -115,6 +116,32 @@ function App() {
     })
   }
 
+
+  function formatAnswer(rawString) {
+    // Split the string into separate sections based on line breaks
+    const sections = rawString.split(/\r?\n\n/);
+  
+    // Define an empty array to store the formatted answer parts
+    const formattedAnswer = [];
+  
+    for (const section of sections) {
+      // Check if the section contains a code block
+      if (section.startsWith('```')) {
+        // Extract the code block (everything between the opening and closing markers)
+        const codeBlock = section.slice(3, section.length - 3);
+  
+        // Wrap the code block in a separate element (e.g., a div)
+        formattedAnswer.push(<div className="code-block"><pre><code>{codeBlock}</code></pre></div>);
+      } else {
+        // If not a code block, treat it as regular text
+        formattedAnswer.push(<p>{section}</p>);
+      }
+    }
+  
+    // Return the formatted answer as an array of React elements
+    return formattedAnswer;
+  }
+  
 
   return (
     <>
@@ -134,12 +161,12 @@ function App() {
           <div className="current-conversation">
             <Header user={user}/>
             
-            <div ref={convo} className='conversation'>
+            <div ref={convo} className={`conversation ${currentChat.length ? 'active-chat': ''}` }>
               {conversations.map((conversation, index) => {
                 if (conversation.author == 'user')
                   return <Human data={conversation.message} key={index}/>
                 else
-                  return <AI data={conversation.message} key={index}/>
+                  return <AI data={formatAnswer(conversation.message)} key={index}/>
               })}
 
             </div>
