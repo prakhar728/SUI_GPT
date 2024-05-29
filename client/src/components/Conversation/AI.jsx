@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaRobot } from "react-icons/fa";
+import logo from "../../assets/Logo.png";
 
 import "./style.css";
 
@@ -10,7 +10,8 @@ const AI = ({data}) => {
   return (
     // eslint-disable-next-line react-dom/validate-dom-nesting
     <div className='ai'>
-        <FaRobot />
+        <img src={logo} alt="logo" className="logo"/>
+
         {data.map((element, index) => (
           <div key={index} >{element}</div>
       ))}
