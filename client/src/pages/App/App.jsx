@@ -19,6 +19,8 @@ function App() {
   const [currentChat, setcurrentChat] = useState("");
   const [chatTitles, setChatTitles] = useState([]);
   const [conversations, setConversations] = useState([]);
+  const [loading, setloading] = useState(false);
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -96,23 +98,28 @@ function App() {
 
 
   const query = async (query) => {
+    setloading(true);
+
     queryModel(user.uid, currentChat, query)
     .then(res => {
       let converstaion = [{
         'author': 'user',
         'message': query
-      }, 
-      {
-        'author': 'model',
-        'message': res.data.response
-      }
-    ]
-
+        }, 
+        {
+          'author': 'model',
+          'message': res.data.response
+        }
+      ];
 
       setConversations([...conversations, ...converstaion]);
+      setloading(false);
     })
     .catch(err => {
       console.log(err);
+    })
+    .finally(() => {
+      setloading(false);
     })
   }
 
@@ -173,7 +180,7 @@ function App() {
           </div>
 
           <div className="prompt-wrapper">
-              <Input user={user} currentChat={currentChat} query={query}/>
+              <Input user={user} currentChat={currentChat} query={query} loading={loading} setloading={setloading}/>
           </div>
         </div>
 
