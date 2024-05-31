@@ -48,7 +48,8 @@ function App() {
 
 
   useEffect(() => {
-    if (currentChat) {
+    if (currentChat && user) {
+      populateData();
       fetchConversation();
     }
   }, [currentChat]);
@@ -102,6 +103,8 @@ function App() {
 
     queryModel(user.uid, currentChat, query)
     .then(res => {
+      let l = conversations.length;
+
       let converstaion = [{
         'author': 'user',
         'message': query
@@ -113,6 +116,11 @@ function App() {
       ];
 
       setConversations([...conversations, ...converstaion]);
+
+      if (l == 1) {
+        populateData();
+      }
+
       setloading(false);
     })
     .catch(err => {

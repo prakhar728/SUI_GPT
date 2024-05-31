@@ -31,6 +31,9 @@ def insert_chat(user_type, author, chat_id, message):
     if user_type != 'model':
         chat = chat_collection.find_one({'_id': ObjectId(chat_id)})
 
+        if len(chat['conversation']) == 1:
+            chat['title'] = message
+        
         if chat['author'] == author:
             chat['conversation'].append({
                 'author': 'user',
