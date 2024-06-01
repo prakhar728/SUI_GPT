@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { IoMdSend } from "react-icons/io";
 import { FiLoader } from "react-icons/fi";
 
 import "./Input.css";
 
 const Input = ({query, currentChat, user, loading, setloading}) => {
+  const [inputField, setinputField] = useState("");
 
   const onEnterPress = (e) => {
     if (e.key === 'Enter') {
@@ -14,11 +15,15 @@ const Input = ({query, currentChat, user, loading, setloading}) => {
     } 
   }
 
+  const triggerQuery = () => {
+    query(inputField);
+  }
+
   return (
     <div className='input'>
-        <input placeholder="Enter your query" onKeyDown={onEnterPress} />
+        <input placeholder="Enter your query" value={inputField} onChange={ (e) => setinputField(e.target.value)} onKeyDown={onEnterPress} />
 
-        <div className='send-icon' >
+        <div className='send-icon' onClick={triggerQuery} >
           { loading ? <FiLoader /> : <IoMdSend /> }
         </div>
     </div>
