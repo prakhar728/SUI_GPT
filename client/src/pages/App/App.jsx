@@ -20,6 +20,7 @@ function App() {
   const [chatTitles, setChatTitles] = useState([]);
   const [conversations, setConversations] = useState([]);
   const [loading, setloading] = useState(false);
+  const [chatLoading, setchatLoading] = useState(false);
 
 
   useEffect(() => {
@@ -42,7 +43,7 @@ function App() {
     } else {
       setChatTitles([]);
       setConversations([]);
-      setcurrentChat([]);
+      setcurrentChat("");
     }
   }, [user]);
 
@@ -56,25 +57,32 @@ function App() {
 
 
   const populateData = async () => {
+    setchatLoading(true);
     getAllChats(user.uid)
     .then(res => {
       setChatTitles(res.data.chats);
+      setchatLoading(false);
     })
     .catch(err => {
       console.log(err);
-    });
+    })
+    .finally(() => {
+      setchatLoading(false);
+    })
   }
 
 
   const getNewChat = async () => {
-    if (user)
-      newChat(user.uid)
-      .then(res => {
-        setcurrentChat(res.data.id);
-      })
-      .catch(err => {
-        console.log("Error while trying to create a new chat", err);
-      })
+    if (user) {
+      try {
+        let nC = await newChat(user.uid);
+        setcurrentChat(nC.data.id);
+
+        return
+      } catch (error) {
+        console.log("Error while trying to create a new chat", error);
+      }
+    }
   }
 
   const scrollToBottom = () => {
@@ -100,7 +108,7 @@ function App() {
 
   const query = async (query) => {
     setloading(true);
-
+    
     queryModel(user.uid, currentChat, query)
     .then(res => {
       let l = conversations.length;
@@ -166,6 +174,11 @@ function App() {
 
           <div className="previous-chats">
 
+            {chatLoading && 
+              <div>
+                Loading your chats! Please be patient
+                (The first time takse upto 50 seconds)
+              </div>}
             {chatTitles.map((chat, index) => 
               <ChatTitle chat={chat} key={index} currentChat={currentChat} setcurrentChat={setcurrentChat}/>
             )}
@@ -188,7 +201,7 @@ function App() {
           </div>
 
           <div className="prompt-wrapper">
-              <Input user={user} currentChat={currentChat} query={query} loading={loading} setloading={setloading}/>
+              <Input user={user} currentChat={currentChat} query={query} loading={loading} setloading={setloading} getNewChat={getNewChat} />
           </div>
         </div>
 

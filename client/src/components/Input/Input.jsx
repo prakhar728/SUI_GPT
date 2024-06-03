@@ -4,7 +4,7 @@ import { FiLoader } from "react-icons/fi";
 
 import "./Input.css";
 
-const Input = ({query, currentChat, user, loading, setloading}) => {
+const Input = ({query, currentChat, user, loading, setloading, getNewChat}) => {
   const [inputField, setinputField] = useState("");
 
   const onEnterPress = (e) => {
@@ -19,9 +19,15 @@ const Input = ({query, currentChat, user, loading, setloading}) => {
     query(inputField);
   }
 
+  const onChange = async (e) => {
+    setinputField(e.target.value);
+    if (currentChat == "")
+      getNewChat();
+  }
+  
   return (
     <div className='input'>
-        <input placeholder="Enter your query" value={inputField} onChange={ (e) => setinputField(e.target.value)} onKeyDown={onEnterPress} />
+        <input placeholder="Enter your query" value={inputField} onChange={ onChange } onKeyDown={onEnterPress} />
 
         <div className='send-icon' onClick={triggerQuery} >
           { loading ? <FiLoader /> : <IoMdSend /> }
