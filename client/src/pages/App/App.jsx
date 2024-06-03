@@ -177,7 +177,7 @@ function App() {
             {chatLoading && 
               <div>
                 Loading your chats! Please be patient
-                (The first time takse upto 50 seconds)
+                (The first time takes upto 50 seconds)
               </div>}
             {chatTitles.map((chat, index) => 
               <ChatTitle chat={chat} key={index} currentChat={currentChat} setcurrentChat={setcurrentChat}/>
